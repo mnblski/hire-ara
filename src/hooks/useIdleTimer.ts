@@ -6,16 +6,20 @@ export const useIdleTimer = (delay = 100) => {
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     let intervalId: NodeJS.Timeout;
+    let isInPage = false;
 
     const startTimer = () => {
       intervalId = setInterval(() => {
-        setIdleTime((prev) => prev + 1);
+        if (document.visibilityState === "visible" && isInPage) {
+          setIdleTime((prev) => prev + 1);
+        }
       }, 1000);
     };
 
     const resetTimer = () => {
       clearTimeout(timeoutId);
       clearInterval(intervalId);
+      setIdleTime(0);
 
       timeoutId = setTimeout(() => {
         startTimer();
@@ -27,15 +31,25 @@ export const useIdleTimer = (delay = 100) => {
       clearInterval(intervalId);
     };
 
-    // Start timer immediately on mount
-    startTimer();
+    const handleEnterPage = () => {
+      isInPage = true;
+      resetTimer();
+    };
 
+    const handleLeavePage = () => {
+      isInPage = false;
+      pauseTimer();
+    };
+
+    // Start timer only when mouse enters the page
+    document.body.addEventListener("mouseenter", handleEnterPage);
+    document.body.addEventListener("mouseleave", handleLeavePage);
     window.addEventListener("mousemove", resetTimer);
-    window.addEventListener("mouseleave", pauseTimer);
 
     return () => {
+      document.body.removeEventListener("mouseenter", handleEnterPage);
+      document.body.removeEventListener("mouseleave", handleLeavePage);
       window.removeEventListener("mousemove", resetTimer);
-      window.removeEventListener("mouseleave", pauseTimer);
       clearTimeout(timeoutId);
       clearInterval(intervalId);
     };
