@@ -1,11 +1,11 @@
-import reactLogo from "./assets/react.svg";
-import "./App.css";
+import { ReactLogo } from "./components/ReactLogo";
+import styles from "./App.module.scss";
 
 function App() {
   return (
-    <>
-      <img src={reactLogo} className="logo react" alt="React logo" />
-    </>
+    <div className={styles.container}>
+      <ReactLogo />
+    </div>
   );
 }
 
