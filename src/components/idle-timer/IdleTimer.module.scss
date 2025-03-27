@@ -1,0 +1,14 @@
+.idleText {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  background: #1a1a1a;
+  color: white;
+  padding: 6px 20px;
+  border-radius: 20px;
+  z-index: 1000;
+  min-width: 40px;
+  text-align: center;
+}
