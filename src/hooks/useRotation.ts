@@ -1,14 +1,16 @@
 import { useState } from "react";
 
-export const useRotation = (initialDirection = true) => {
+export const useRotation = (enabled = true, initialDirection = true) => {
   const [isClockwise, setIsClockwise] = useState(initialDirection);
 
   const toggleRotation = () => {
-    setIsClockwise((prev) => !prev);
+    if (enabled) {
+      setIsClockwise((prev) => !prev);
+    }
   };
 
   return {
-    isClockwise,
+    isClockwise: enabled ? isClockwise : false,
     toggleRotation,
   };
 };

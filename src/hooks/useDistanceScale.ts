@@ -2,7 +2,11 @@ import { useTransform, useMotionValue } from "framer-motion";
 import { useMousePosition } from "./useMousePosition";
 import { useState } from "react";
 
-export const useDistanceScale = (minScale = 0.5, maxScale = 1.5) => {
+export const useDistanceScale = (
+  enabled = true,
+  minScale = 0.5,
+  maxScale = 1.5
+) => {
   const mousePosition = useMousePosition();
   const [hasMouseMoved, setHasMouseMoved] = useState(false);
 
@@ -18,8 +22,8 @@ export const useDistanceScale = (minScale = 0.5, maxScale = 1.5) => {
   }
 
   const scale = useTransform([x, y], (latest: number[]) => {
-    if (!hasMouseMoved) {
-      return 1.0; // Return normal scale until mouse moves
+    if (!enabled || !hasMouseMoved) {
+      return 1.0; // Return normal scale when disabled or until mouse moves
     }
 
     const distanceFromCenter = Math.sqrt(

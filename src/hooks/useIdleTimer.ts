@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 
-export const useIdleTimer = (delay = 100) => {
+export const useIdleTimer = (enabled = true, delay = 100) => {
   const [idleTime, setIdleTime] = useState(0);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     let intervalId: NodeJS.Timeout;
-    let isInPage = false;
+    let isInPage = true;
 
     const startTimer = () => {
       intervalId = setInterval(() => {
@@ -16,19 +16,28 @@ export const useIdleTimer = (delay = 100) => {
       }, 1000);
     };
 
+    const pauseTimer = () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
+
+    // Handle enabled state changes
+    setIdleTime(0);
+
+    if (enabled) {
+      startTimer();
+    } else {
+      pauseTimer();
+      return;
+    }
+
     const resetTimer = () => {
       clearTimeout(timeoutId);
       clearInterval(intervalId);
-      setIdleTime(0);
 
       timeoutId = setTimeout(() => {
         startTimer();
       }, delay);
-    };
-
-    const pauseTimer = () => {
-      clearTimeout(timeoutId);
-      clearInterval(intervalId);
     };
 
     const handleEnterPage = () => {
@@ -41,7 +50,7 @@ export const useIdleTimer = (delay = 100) => {
       pauseTimer();
     };
 
-    // Start timer only when mouse enters the page
+    // Add event listeners
     document.body.addEventListener("mouseenter", handleEnterPage);
     document.body.addEventListener("mouseleave", handleLeavePage);
     window.addEventListener("mousemove", resetTimer);
@@ -53,7 +62,7 @@ export const useIdleTimer = (delay = 100) => {
       clearTimeout(timeoutId);
       clearInterval(intervalId);
     };
-  }, [delay]);
+  }, [delay, enabled]);
 
   return idleTime;
 };
